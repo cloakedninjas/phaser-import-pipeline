@@ -1,13 +1,17 @@
-const MANIFEST_FILE = './manifest.json';
-const SOURCE_DIR = './source';
-const ASSET_DIR = './assets';
-
 const fs = require('fs');
-const fsp = require('fs').promises;
+const fsp = fs.promises;
 const path = require('path');
 
-// const manifest = JSON.parse(fs.readFileSync(MANIFEST_FILE, 'utf-8'));
+const DEFAULT_OPTS = {
+    sourceDir: 'source',
+    destDir: 'assets',
+    manifestPath: 'assets/manfiest.json',
+    deleteOriginal: true
+};
 
+let options;
+
+// const manifest = JSON.parse(fs.readFileSync(MANIFEST_FILE, 'utf-8'));
 /* Object.keys(manifest).forEach((fileType) => {
     Object.keys(manifest[fileType]).forEach((key) => {
         const entry = manifest[fileType][key];
@@ -21,64 +25,69 @@ const path = require('path');
 
 fs.writeFileSync(MANIFEST_FILE, JSON.stringify(manifest)); */
 
-function readSourceDirectories() {
-    fsp.readdir(SOURCE_DIR)
-        .then(ensureAssetDirExists)
-        .then(ensureTypeDirsExist)
-        .then(processAssets)
-        .catch(e => { console.error(e) });
+function run(opts) {
+    options = Object.assign({}, DEFAULT_OPTS, opts);
+
+    return recurseDirectory()
+        .catch(e => {
+            console.log('ERROR!');
+            console.error(e)
+        });
 }
 
-function ensureAssetDirExists(sourceFolders) {
-    try {
-        fs.statSync(ASSET_DIR);
-    } catch (e) {
-        if (e.code === 'ENOENT') {
-            fs.mkdirSync(ASSET_DIR);
-        }
-    }
+function recurseDirectory(sourceDirectory) {
+    sourceDirectory = sourceDirectory || '';
+    const rootPath = path.join(options.sourceDir, sourceDirectory);
 
-    return sourceFolders;
+    return fsp.readdir(rootPath, { withFileTypes: true })
+        .then(files => {
+            return Promise.all(
+                files.map(file => {
+                    const fullPath = path.join(rootPath, file.name);
+
+                    if (file.isDirectory()) {
+                        const destFolder = path.join(sourceDirectory, file.name);
+                        const destPath = path.join(options.destDir, destFolder);
+
+                        return ensureDirExists(destPath)
+                            .then(() => {
+                                return recurseDirectory(destFolder);
+                            });
+                    } else {
+                        const destFilePath = path.join(options.destDir, sourceDirectory, renameFile(file.name));
+                        return moveFile(fullPath, destFilePath);
+                    }
+                })
+            );
+        });
 }
 
-function ensureTypeDirsExist(types) {
-    return Promise.all(types.map(type => {
-        const destPath = path.join(ASSET_DIR, type);
-
-        fsp.stat(destPath)
-            .catch(e => {
-                if (e.code === 'ENOENT') {
-                    fs.mkdirSync(destPath);
-                }
-            })
-    })).then(() => {
-        return types;
-    });
+function ensureDirExists(directory) {
+    return fsp.stat(directory)
+        .catch(e => {
+            if (e.code === 'ENOENT') {
+                fs.mkdirSync(directory, { recursive: true });
+            } else {
+                throw e;
+            }
+        });
 }
 
-function processAssets(types) {
-    console.log(1, types);
-
-    types.forEach(type => {
-        const destPath = path.join(ASSET_DIR, type);
-
-        fsp.readdir(path.join(SOURCE_DIR, type))
-            .then(assetPath => {
-                console.log(assetPath);
-            })
-
-        //const newFilename = renameFile
-    });
+function moveFile(srcFile, destFile) {
+    // TODO - change to move
+    // fsp.moveFile(srcFile, destFile);
+    return fsp.copyFile(srcFile, destFile);
 }
 
 function renameFile(input) {
     let output = input.toLowerCase();
     output = output.replace(/\s+/g, '_');
+    output = output.replace(/-/g, '_');
 
     return output;
 }
 
 module.exports = {
     renameFile,
-    readSourceDirectories
+    run
 };

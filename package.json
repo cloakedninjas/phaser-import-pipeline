@@ -4,10 +4,10 @@
   "description": "A pipeline for importing assets into a Phaser 3 project",
   "main": "index.js",
   "scripts": {
-    "test": "node src/importer.test.js"
+    "test": "jest"
   },
   "engines": {
-    "node": ">=10.0.0"
+    "node": ">=10.10.0"
   },
   "bin": {
     "phaser-importer": "./src/cli.js"
@@ -19,5 +19,12 @@
     "importer"
   ],
   "author": "Daniel Jackson",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^25.1.0",
+    "mock-fs": "^4.11.0"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
 }
