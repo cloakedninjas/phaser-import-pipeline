@@ -1,8 +1,12 @@
 {
   "name": "phaser-import-pipeline",
   "version": "1.0.0",
-  "description": "A pipeline for importing assets into a Phaser 3 project",
+  "description": "A pipeline for importing assets into a Phaser project",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cloakedninjas/phaser-import-pipeline.git"
+  },
   "scripts": {
     "test": "jest"
   },
@@ -10,7 +14,7 @@
     "node": ">=10.10.0"
   },
   "bin": {
-    "phaser-importer": "./src/cli.js"
+    "phaser-import-pipeline": "./src/cli.js"
   },
   "keywords": [
     "phaser",
@@ -21,8 +25,8 @@
   "author": "Daniel Jackson",
   "license": "ISC",
   "devDependencies": {
-    "jest": "^25.1.0",
-    "mock-fs": "^4.11.0"
+    "jest": "^26.0.1",
+    "mock-fs": "^4.12.0"
   },
   "jest": {
     "testEnvironment": "node"
