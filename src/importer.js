@@ -25,7 +25,6 @@ function run(opts) {
         .then(recurseDirectory)
         .then(saveManifest)
         .catch(e => {
-            console.log('ERROR!');
             console.error(e)
         });
 }
@@ -67,8 +66,12 @@ function ensureManifestExists() {
         })
         .catch(error => {
             if (error.code === 'ENOENT') {
-                manifest = {};
-                return fsp.writeFile(options.manifestPath, '{}');
+                manifest = {
+                    assetRoot: options.destDir,
+                    totalSize: 0,
+                    assets: {}
+                };
+                return fsp.writeFile(options.manifestPath, JSON.stringify(manifest));
             } else {
                 throw e;
             }
@@ -114,8 +117,8 @@ function addEntryToManifest(filePath) {
                 return;
             }
 
-            if (!manifest[assetType]) {
-                manifest[assetType] = {};
+            if (!manifest.assets[assetType]) {
+                manifest.assets[assetType] = {};
             }
 
             const key = parts.join('_')
@@ -123,11 +126,13 @@ function addEntryToManifest(filePath) {
 
             const extraProps = assetTypeProps[assetType] || {};
 
-            manifest[assetType][key] = {
+            manifest.assets[assetType][key] = {
                 file: parts.join('/'),
                 size: stats.size,
                 ...extraProps
             };
+
+            manifest.totalSize += stats.size
         });
 }
 

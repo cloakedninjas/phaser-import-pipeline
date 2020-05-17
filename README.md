@@ -65,17 +65,21 @@ Can be set using a `.pipelinerc` file. With sample contents:
 
 ```json
 {
-  "image": {
-    "house": {
-      "size": 2975
+  "assetRoot": "assets",
+  "totalSize": 420615,
+  "assets": {
+    "image": {
+      "house": {
+        "size": 2975
+      },
+      "person": {
+        "size": 66520
+      }
     },
-    "person": {
-      "size": 66520
-    }
-  },
-  "audio": {
-    "door_close": {
-      "size": 314500
+    "audio": {
+      "door_close": {
+        "size": 314500
+      }
     }
   }
 }

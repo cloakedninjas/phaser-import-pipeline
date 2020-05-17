@@ -53,7 +53,7 @@ describe('run()', () => {
             });
     });
 
-    it('should generate manifest entries for known asset types', (done) => {
+    it('should generate a correct manifest', (done) => {
         importer.run()
             .then(() => {
                 expect(fs.existsSync(MANIFEST_PATH)).toEqual(true);
@@ -62,20 +62,24 @@ describe('run()', () => {
                 const json = JSON.parse(manifest);
 
                 expect(json).toEqual({
-                    image: {
-                        a_test_image_1: {
-                            file: 'a_test_image_1.jpg',
-                            size: 18
+                    assetRoot: 'assets',
+                    totalSize: 54,
+                    assets: {
+                        image: {
+                            a_test_image_1: {
+                                file: 'a_test_image_1.jpg',
+                                size: 18
+                            },
+                            dir1_test_file_2: {
+                                file: 'dir1/test_file_2.png',
+                                size: 23
+                            }
                         },
-                        dir1_test_file_2: {
-                            file: 'dir1/test_file_2.png',
-                            size: 23
-                        }
-                    },
-                    audio: {
-                        test: {
-                            file: 'test.mp3',
-                            size: 13
+                        audio: {
+                            test: {
+                                file: 'test.mp3',
+                                size: 13
+                            }
                         }
                     }
                 })
@@ -85,14 +89,25 @@ describe('run()', () => {
     });
 
     it('should read existing manifest if one is present', (done) => {
-        fs.writeFileSync(MANIFEST_PATH, '{"field": "property"}');
+        fs.writeFileSync(MANIFEST_PATH, JSON.stringify({
+            assetRoot: 'assets',
+            totalSize: 34,
+            assets: {
+                image: {
+                    existingImage: {
+                        file: 'test.png',
+                        size: 13
+                    }
+                }
+            }
+        }));
 
         importer.run()
             .then(() => {
                 const manifest = fs.readFileSync(MANIFEST_PATH);
                 const json = JSON.parse(manifest);
 
-                expect(json.field).toEqual('property');
+                expect(json.assets.image.existingImage.file).toEqual('test.png');
 
                 done();
             });
@@ -107,7 +122,7 @@ describe('run()', () => {
                 const manifest = fs.readFileSync(MANIFEST_PATH);
                 const json = JSON.parse(manifest);
 
-                expect(json.spritesheet).toEqual({
+                expect(json.assets.spritesheet).toEqual({
                     player: {
                         file: 'player.png',
                         size: 21,
