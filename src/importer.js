@@ -107,7 +107,6 @@ function addEntryToManifest(filePath) {
         .then(stats => {
             const basePath = filePath.substring(options.destDir.length + 1);
             const parts = basePath.split(path.sep);
-
             const assetType = parts.shift();
 
             if (parts.length === 0) {
@@ -125,6 +124,7 @@ function addEntryToManifest(filePath) {
             const extraProps = assetTypeProps[assetType] || {};
 
             manifest[assetType][key] = {
+                file: parts.join('/'),
                 size: stats.size,
                 ...extraProps
             };

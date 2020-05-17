@@ -64,14 +64,17 @@ describe('run()', () => {
                 expect(json).toEqual({
                     image: {
                         a_test_image_1: {
+                            file: 'a_test_image_1.jpg',
                             size: 18
                         },
                         dir1_test_file_2: {
+                            file: 'dir1/test_file_2.png',
                             size: 23
                         }
                     },
                     audio: {
                         test: {
+                            file: 'test.mp3',
                             size: 13
                         }
                     }
@@ -106,6 +109,7 @@ describe('run()', () => {
 
                 expect(json.spritesheet).toEqual({
                     player: {
+                        file: 'player.png',
                         size: 21,
                         frameWidth: 0,
                         frameHeight: 0
