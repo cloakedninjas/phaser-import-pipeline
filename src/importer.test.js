@@ -2,8 +2,6 @@ const fs = require('fs');
 const mockFS = require('mock-fs');
 const importer = require('./importer');
 
-// console.log('');
-
 const MANIFEST_PATH = 'assets/manifest.json';
 
 describe('renameFile()', () => {
@@ -129,5 +127,67 @@ describe('run()', () => {
 
                 done();
             });
+    });
+});
+
+describe('config', () => {
+    const config = {
+        sourceDir: 'my-source',
+        destDir: 'my-dist',
+        manifestPath: 'my-dist/manifest.json',
+        deleteOriginal: false
+    };
+
+    beforeEach(() => {
+        mockFS({
+            '.pipelinerc': JSON.stringify(config),
+            'my-source': {
+                'image': {
+                    'test.jpg': 'image content'
+                }
+            }
+        });
+    });
+
+    afterEach(() => {
+        mockFS.restore();
+    });
+
+    it('should use config file values set from RC file', (done) => {
+        importer.run()
+            .then(() => {
+                expect(fs.existsSync('my-dist/image/test.jpg')).toEqual(true);
+                expect(fs.existsSync('my-dist/manifest.json')).toEqual(true);
+                done();
+            });
+    });
+
+    describe('deleteOriginal', () => {
+        it('should keep the source file when false', (done) => {
+            importer.run()
+                .then(() => {
+                    expect(fs.existsSync('my-source/image/test.jpg')).toEqual(true);
+                    done();
+                });
+        });
+
+        it('should delete the source file when true', (done) => {
+            config.deleteOriginal = true;
+
+            mockFS({
+                '.pipelinerc': JSON.stringify(config),
+                'my-source': {
+                    'image': {
+                        'test.jpg': 'image content'
+                    }
+                }
+            });
+
+            importer.run()
+                .then(() => {
+                    expect(fs.existsSync('my-source/image/test.jpg')).toEqual(false);
+                    done();
+                });
+        });
     });
 });

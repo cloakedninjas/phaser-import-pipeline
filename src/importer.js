@@ -1,6 +1,8 @@
 const fs = require('fs');
 const fsp = fs.promises;
 const path = require('path');
+const { rcFile } = require('rc-config-loader');
+
 const assetTypeProps = require('./asset-type-properties');
 
 const DEFAULT_OPTS = {
@@ -14,7 +16,9 @@ let options;
 let manifest;
 
 function run(opts) {
-    options = Object.assign({}, DEFAULT_OPTS, opts);
+    const configFile = rcFile('pipeline');
+    configOpts = configFile ? configFile.config : {}
+    options = Object.assign({}, DEFAULT_OPTS, configOpts);
 
     return ensureDirExists(options.destDir)
         .then(ensureManifestExists)
@@ -83,8 +87,10 @@ function ensureDirExists(directory) {
 }
 
 function moveFile(srcFile, destFile) {
-    // TODO - change to move
-    // fsp.moveFile(srcFile, destFile);
+    if (options.deleteOriginal) {
+        return fsp.rename(srcFile, destFile);
+    }
+
     return fsp.copyFile(srcFile, destFile);
 }
 
@@ -122,9 +128,6 @@ function addEntryToManifest(filePath) {
                 size: stats.size,
                 ...extraProps
             };
-        })
-        .catch(e => {
-            console.error('bugger', e);
         });
 }
 

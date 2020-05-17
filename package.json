@@ -30,5 +30,8 @@
   },
   "jest": {
     "testEnvironment": "node"
+  },
+  "dependencies": {
+    "rc-config-loader": "^3.0.0"
   }
 }

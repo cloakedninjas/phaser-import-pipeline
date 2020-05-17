@@ -1,22 +1,82 @@
 # Phaser 3 Asset Import Pipeline
 
-- Drop files into corresponding directories
-- Have them copied to the desired asset folder with metadata saved to a manifest
+- Drop files into corresponding directories:
+  - source/image
+  - source/audio
+- Have them copied to the output directory:
+  - assets/image
+  - assets/audio
+- Normalize the filenames
+  - to lower case
+  - convert spaces, hyphens to underscores
+- Record filesize of each asset into a
+  - manifest.json
+- Append metadata into manifest
+  - spritesheet (frameWidth, frameHeight)
 
 ## Installation
 
+`npm i phaser-import-pipeline`
+
 ## Usage
 
-`phaser-import`
+Via CLI:
+```
+$ ./node_modules/.bin/phaser-import-pipeline
+```
+
+Via npm script:
+```json
+{
+  "scripts": {
+    "import": "phaser-import-pipeline"
+  }
+}
+```
 
 - `no args` run copy process (cleanup filenames, add to manifest)
-- `init` create source folders (image, audio, spritesheets)
 - `watch` watch directories, run base cmd
 
 ## Config
 
-- source root folder (./import)
-- destination root folder (./assets)
-- manifest path (./manifest.json)
-- delete on copy (Y)/n
-- overwrite on duplicate path (Y)/n
+Can be set using a `.pipelinerc` file. With sample contents:
+
+```json
+{
+  "sourceDir": "source",
+  "destDir": "assets",
+  "manifestPath": "assets/manifest.json",
+  "deleteOriginal": true
+}
+```
+
+## Asset types
+
+`spritesheet` includes the following default manifest data
+
+```json
+{
+  "frameWidth": 0,
+  "frameHeight": 0
+}
+```
+
+## Example output `manifest.json`
+
+```json
+{
+  "image": {
+    "house": {
+      "size": 2975
+    },
+    "person": {
+      "size": 66520
+    }
+  },
+  "audio": {
+    "door_close": {
+      "size": 314500
+    }
+  }
+}
+```
