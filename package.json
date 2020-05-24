@@ -8,7 +8,8 @@
     "url": "https://github.com/cloakedninjas/phaser-import-pipeline.git"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint ."
   },
   "engines": {
     "node": ">=10.10.0"
@@ -25,6 +26,7 @@
   "author": "Daniel Jackson",
   "license": "ISC",
   "devDependencies": {
+    "eslint": "^7.1.0",
     "jest": "^26.0.1",
     "mock-fs": "^4.12.0"
   },

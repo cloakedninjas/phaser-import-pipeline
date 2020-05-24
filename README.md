@@ -70,14 +70,17 @@ Can be set using a `.pipelinerc` file. With sample contents:
   "assets": {
     "image": {
       "house": {
+        "file": "house.png",
         "size": 2975
       },
       "person": {
+        "file": "person.jpg",
         "size": 66520
       }
     },
     "audio": {
       "door_close": {
+        "file": "door_close.mp3",
         "size": 314500
       }
     }

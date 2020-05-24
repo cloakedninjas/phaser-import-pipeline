@@ -15,9 +15,9 @@ const DEFAULT_OPTS = {
 let options;
 let manifest;
 
-function run(opts) {
+function run() {
     const configFile = rcFile('pipeline');
-    configOpts = configFile ? configFile.config : {}
+    const configOpts = configFile ? configFile.config : {}
     options = Object.assign({}, DEFAULT_OPTS, configOpts);
 
     return ensureDirExists(options.destDir)
@@ -73,7 +73,7 @@ function ensureManifestExists() {
                 };
                 return fsp.writeFile(options.manifestPath, JSON.stringify(manifest));
             } else {
-                throw e;
+                throw error;
             }
         });
 }
