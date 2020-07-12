@@ -61,6 +61,17 @@ Can be set using a `.pipelinerc` file. With sample contents:
 }
 ```
 
+`audio` supports multiple file formats (the largest file will be used for manifest size calculation)
+
+```json
+  {
+    "door_close": {
+      "file": ["door_close.mp3", "door_close.ogg"],
+      "size": 314500
+    }
+  }
+```
+
 ## Example output `manifest.json`
 
 ```json
