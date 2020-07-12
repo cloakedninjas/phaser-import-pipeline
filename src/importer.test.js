@@ -135,6 +135,25 @@ describe('run()', () => {
             });
     });
 
+    it('should support multiple audio filetypes', (done) => {
+        fs.writeFileSync('source/audio/test.ogg', 'ogg data');
+
+        importer.run()
+            .then(() => {
+                const manifest = fs.readFileSync(MANIFEST_PATH);
+                const json = JSON.parse(manifest);
+
+                expect(json.assets.audio).toEqual({
+                    test: {
+                        file: ['test.mp3', 'test.ogg'],
+                        size: 13
+                    }
+                });
+
+                done();
+            });
+    });
+
     it('should warn when detecting files in the source root', (done) => {
         fs.writeFileSync('source/dummy.txt', 'some text content');
 

@@ -124,15 +124,20 @@ function addEntryToManifest(filePath) {
             const key = parts.join('_')
                 .replace(/\..+$/, '');
 
-            const extraProps = assetTypeProps[assetType] || {};
+            if (typeof assetTypeProps[assetType] === 'function') {
+                assetTypeProps[assetType](key, parts, stats, manifest)
+            } else {
+                // simple type
+                const extraProps = assetTypeProps[assetType] || {};
 
-            manifest.assets[assetType][key] = {
-                file: parts.join('/'),
-                size: stats.size,
-                ...extraProps
-            };
+                manifest.assets[assetType][key] = {
+                    file: parts.join('/'),
+                    size: stats.size,
+                    ...extraProps
+                };
 
-            manifest.totalSize += stats.size
+                manifest.totalSize += stats.size
+            }
         });
 }
 
