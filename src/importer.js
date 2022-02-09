@@ -37,6 +37,10 @@ function recurseDirectory(sourceDirectory) {
         .then(files => {
             return Promise.all(
                 files.map(file => {
+                    if (file.name.startsWith('.')) {
+                        return;
+                    }
+
                     const srcFilePath = path.join(rootPath, file.name);
 
                     if (file.isDirectory()) {
