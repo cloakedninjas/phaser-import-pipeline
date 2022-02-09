@@ -58,7 +58,7 @@ describe('run()', () => {
             .then(() => {
                 expect(fs.existsSync(MANIFEST_PATH)).toEqual(true);
 
-                const manifest = fs.readFileSync(MANIFEST_PATH);
+                const manifest = fs.readFileSync(MANIFEST_PATH, 'utf-8');
                 const json = JSON.parse(manifest);
 
                 expect(json).toEqual({
@@ -104,7 +104,7 @@ describe('run()', () => {
 
         importer.run()
             .then(() => {
-                const manifest = fs.readFileSync(MANIFEST_PATH);
+                const manifest = fs.readFileSync(MANIFEST_PATH, 'utf-8');
                 const json = JSON.parse(manifest);
 
                 expect(json.assets.image.existingImage.file).toEqual('test.png');
@@ -119,7 +119,7 @@ describe('run()', () => {
 
         importer.run()
             .then(() => {
-                const manifest = fs.readFileSync(MANIFEST_PATH);
+                const manifest = fs.readFileSync(MANIFEST_PATH, 'utf-8');
                 const json = JSON.parse(manifest);
 
                 expect(json.assets.spritesheet).toEqual({
@@ -140,7 +140,7 @@ describe('run()', () => {
 
         importer.run()
             .then(() => {
-                const manifest = fs.readFileSync(MANIFEST_PATH);
+                const manifest = fs.readFileSync(MANIFEST_PATH, 'utf-8');
                 const json = JSON.parse(manifest);
 
                 expect(json.assets.audio).toEqual({
@@ -162,6 +162,17 @@ describe('run()', () => {
         importer.run()
             .then(() => {
                 expect(spy).toHaveBeenCalledWith(`dummy.txt in root source folder, unable to determine type for manifest`);
+
+                done();
+            });
+    });
+
+    it('should skip dot files', (done) => {
+        fs.writeFileSync('source/audio/.gitkeep', '');
+
+        importer.run()
+            .then(() => {
+                expect(fs.existsSync('assets/audio/.gitkeep')).toEqual(false);
 
                 done();
             });
