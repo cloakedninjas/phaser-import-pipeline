@@ -1,7 +1,9 @@
 module.exports = {
   spritesheet: {
-    frameWidth: 0,
-    frameHeight: 0
+    frameConfig: {
+      frameWidth: 0,
+      frameHeight: 0
+    }
   },
 
   audio: (key, parts, stats, manifest) => {
