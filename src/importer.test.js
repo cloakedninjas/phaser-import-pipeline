@@ -126,8 +126,10 @@ describe('run()', () => {
                     player: {
                         file: 'player.png',
                         size: 21,
-                        frameWidth: 0,
-                        frameHeight: 0
+                        frameConfig: {
+                            frameWidth: 0,
+                            frameHeight: 0
+                        }
                     }
                 });
 
